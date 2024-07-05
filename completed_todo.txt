@@ -1,4 +1,5 @@
-Clean house
-Drink redbull
-Got bananas
-Finish this quickly
+Make the To-Do Program
+Plan out the program
+Check all Functionality
+Make Sure to add GUI
+Test All Code

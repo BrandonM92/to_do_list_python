@@ -1,17 +1,22 @@
 import time
 
-""" This file contains all my methods used in the main.py file"""
-
 # VARIABLES
 complete_list = []  # List to store completed tasks
-filepath = 'todo.txt'
+filepath = 'to-do.txt'
 completed_filepath = 'completed_todo.txt'
 now = time.strftime("%b %d, %Y %H:%M:%S")
 
 
 def saveToDoList(todo_list):
-    """Saves To Do List"""
-    # Save the current to-do list to 'todo.txt'
+    """
+    Saves the current to-do list to 'to-do.txt'.
+
+    Args:
+    - todo_list (list): The list of tasks to be saved.
+
+    Returns:
+    - None
+    """
     try:
         with open(filepath, 'w') as file:
             file.writelines(todo_list)
@@ -20,7 +25,16 @@ def saveToDoList(todo_list):
 
 
 def showTodoList(todo_list, counter):
-    """Displays To Do List"""
+    """
+    Generates a formatted string representation of the to-do list.
+
+    Args:
+    - todo_list (list): The list of tasks to display.
+    - counter (int): Starting number for indexing tasks.
+
+    Returns:
+    - str: Formatted string representation of the to-do list.
+    """
     if not todo_list:
         return "Your to-do list is empty."
     else:
@@ -31,54 +45,79 @@ def showTodoList(todo_list, counter):
 
 
 def addToList(todo_list, task):
-    """Adding new tasks to todo list"""
+    """
+    Adds a new task to the to-do list.
+
+    Args:
+    - todo_list (list): The list of tasks to add the new task to.
+    - task (str): The task to add.
+
+    Returns:
+    - None
+    """
     todo_list.append(task + "\n")
 
 
 def editTask(todo_list, old_task_name, new_task_name):
-    """Edit Tasks and change the name or edit any spelling mistakes"""
+    """
+    Edits a task in the to-do list.
+
+    Args:
+    - todo_list (list): The list of tasks to edit.
+    - old_task_name (str): The name of the task to be replaced.
+    - new_task_name (str): The new name for the task.
+
+    Returns:
+    - None
+    """
     try:
         task_index = todo_list.index(old_task_name + "\n")
-        todo_list[task_index] = new_task_name+ "\n"
+        todo_list[task_index] = new_task_name + "\n"
         print(f"Task '{old_task_name}' updated to '{new_task_name}'.")
     except ValueError:
         print("Task not found in the to-do list.")
 
 
-def insertNewTask(todo_list):
-    """If you are worried about ordering lists in order of importance, we have the functionality to edit or
-    change the order of the items individually"""
+def insertNewTask(todo_list, new_task, index):
+    """
+    Inserts a new task at a specific index in the to-do list.
+
+    Args:
+    - todo_list (list): The list of tasks to insert the new task into.
+    - new_task (str): The task to insert.
+    - index (int): The index where the new task should be inserted.
+
+    Returns:
+    - None
+    """
     try:
-        showTodoList(todo_list, 0)
-        new_task = input("Enter new task name: ").capitalize().strip() + "\n"
+        # Validate the index
+        if 0 <= index <= len(todo_list):
+            # Add \n to new_task if it doesn't already have it
+            if not new_task.endswith("\n"):
+                new_task += "\n"
 
-        print(
-            f"Choose where to insert '{new_task.strip()}'. Enter the index number (0 to {len(todo_list)}) or leave "
-            f"empty to append at the end.")
-        position_input = input("Index to insert (leave empty for end): ").strip()
-
-        if position_input.isdigit():
-            position = int(position_input)
-            if 0 <= position < len(todo_list):
-                todo_list.insert(position, new_task)
-            else:
-                print(f"Index {position} is out of range. Inserting at the end of the list.")
-                todo_list.append(new_task)
-        elif position_input == "":
-            todo_list.append(new_task)
+            # Insert new_task at the specified index
+            todo_list.insert(index, new_task)
+            print(f"Task '{new_task.strip()}' inserted at index {index} successfully.")
         else:
-            print("Invalid input. Inserting at the end of the list.")
-            todo_list.append(new_task)
+            print(f"Index {index} is out of range. Appending '{new_task.strip()}' at the end.")
 
-        print(f"Task '{new_task.strip()}' inserted successfully.")
     except ValueError:
-        print("Invalid input. Inserting at the end of the list.")
-        new_task = ""  # Assign an empty string in case of ValueError
-        todo_list.append(new_task)
+        print("Error occurred while inserting the task.")
 
 
 def deleteTask(todo_list, task_name):
-    """Allows user to delete tasks from list"""
+    """
+    Deletes a task from the to-do list.
+
+    Args:
+    - todo_list (list): The list of tasks to delete the task from.
+    - task_name (str): The name of the task to delete.
+
+    Returns:
+    - list or str: Updated todo_list after deletion, or error message if task not found.
+    """
     try:
         task_index = todo_list.index(task_name)
         todo_list.pop(task_index)
@@ -88,26 +127,43 @@ def deleteTask(todo_list, task_name):
 
 
 def completeTask(todo_list, task_name):
-    """This method handles completing tasks and saving them to new txt file while also removing them from todo.txt"""
-    try:
-        task_index = todo_list.index(task_name.capitalize() + "\n")
-        completed_task = todo_list.pop(task_index).strip()
-        complete_list.append(completed_task)
+    """
+    Completes a task and moves it to 'completed_todo.txt'.
 
-        # Append the completed task to the 'completed_todo.txt' file
+    Args:
+    - todo_list (list): The list of tasks containing the task to complete.
+    - task_name (str): The name of the task to complete.
+
+    Returns:
+    - list: Updated todo_list after completing the task.
+    """
+    try:
+        task_index = todo_list.index(task_name)
+        completed_task = todo_list.pop(task_index).strip()
+
         try:
             with open(completed_filepath, 'a') as file:
-                file.write(completed_task + "\n")
-                print(f"'{completed_task}' has been completed, moved to the completed_todo.txt")
+                if file.tell() != 0:
+                    file.write("\n" + completed_task)  # Write task on new line if file isn't empty
+                else:
+                    file.write(completed_task)  # Write task without leading newline for first entry
+            print(f"'{completed_task}' has been completed and moved to 'completed_todo.txt'")
         except IOError as e:
             print(f"An error occurred while saving the completed task: {e}")
 
     except ValueError:
         print("Task not found in the to-do list.")
 
+    return todo_list  # Return the updated todo_list after completing the task
+
 
 def loadTodoList():
-    """Loads the to-do list (todo.txt)"""
+    """
+    Loads the to-do list from 'to-do.txt'.
+
+    Returns:
+    - list: The loaded list of tasks from 'to-do.txt'.
+    """
     try:
         with open(filepath, 'r') as file:
             return file.readlines()
