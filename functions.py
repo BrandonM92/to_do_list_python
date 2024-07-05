@@ -22,23 +22,24 @@ def saveToDoList(todo_list):
 def showTodoList(todo_list, counter):
     """Displays To Do List"""
     if not todo_list:
-        print("Your to-do list is empty.")
+        return "Your to-do list is empty."
     else:
-        print("Current To-Do List:")
+        result = "Current To-Do List: \n"
         for index, task in enumerate(todo_list):
-            print(f"{index + counter}. {task.strip()}")
+            result += f"{index + counter}. {task.strip()} \n"
+        return result
 
 
 def addToList(todo_list, task):
     """Adding new tasks to todo list"""
-    todo_list.append(task.capitalize() + "\n")
+    todo_list.append(task + "\n")
 
 
 def editTask(todo_list, old_task_name, new_task_name):
     """Edit Tasks and change the name or edit any spelling mistakes"""
     try:
-        task_index = todo_list.index(old_task_name.capitalize() + "\n")
-        todo_list[task_index] = new_task_name.capitalize() + "\n"
+        task_index = todo_list.index(old_task_name + "\n")
+        todo_list[task_index] = new_task_name+ "\n"
         print(f"Task '{old_task_name}' updated to '{new_task_name}'.")
     except ValueError:
         print("Task not found in the to-do list.")
@@ -79,10 +80,11 @@ def insertNewTask(todo_list):
 def deleteTask(todo_list, task_name):
     """Allows user to delete tasks from list"""
     try:
-        task_index = todo_list.index(task_name.capitalize() + "\n")
+        task_index = todo_list.index(task_name)
         todo_list.pop(task_index)
+        return todo_list
     except ValueError:
-        print("Task not found in the to-do list.")
+        return "Task not found in the to-do list."
 
 
 def completeTask(todo_list, task_name):

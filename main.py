@@ -1,6 +1,7 @@
 # IMPORTS
 import functions
 import time
+#import gui
 
 
 """Brandon Mathews - "Python To-Do List" """
@@ -13,6 +14,7 @@ when you are doing project managing as the quick and efficient manner to update 
 # Variables
 ft = functions
 now = time.strftime("%b %d, %Y %H:%M:%S")
+#command = gui.command
 
 
 # MAIN GAME LOOP METHOD
